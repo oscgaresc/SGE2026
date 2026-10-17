@@ -1,0 +1,31 @@
+# Siguiendo el fichero UD 04.02 - Docker CheatSheet - Version UD04.pdf, entre otros
+#Paso 1: base oficial de Nginx basada en Alpine Linux, indicado en la tarea
+FROM nginx:1.27-alpine
+
+# Paso 2. Tras leer la documentación de dockerdocs, se copia la configuración personalizada de Nginx en el directorio de configuración /etc/nginx/
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Paso 3. Se copia el contenido de la web estàtica (index.html) en el directorio de Nginx como se indicó en nginx.conf
+COPY site/ /usr/share/nginx/html/
+
+# Paso 4. Se crea el usuari no-root 'nginxuser' y se ajusta los permisos de carpetes necessàries per a Nginx
+RUN adduser -D -u 10001 nginxuser && \ # añadiendo el usuario
+	# añadiendo usuario y grupo a las carpetas necesarias
+    chown -R nginxuser:nginxuser /usr/share/nginx/html && \
+    chown -R nginxuser:nginxuser /var/cache/nginx && \
+    chown -R nginxuser:nginxuser /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown -R nginxuser:nginxuser /var/run/nginx.pid
+
+# Paso 5. Se cambia al usuario no-root per motius de seguridad
+USER nginxuser
+
+# Paso 6. Se define el HEALTHCHECK para verificar el servicio en el endpoint "/" siguiendo la documentación, aunque usan curl en la imagen Alpine de Linux utilizan wget que se aprovecha en este caso.
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD wget -qO- http://localhost/ || exit 1
+
+# Paso 7. Se expone el puerto 80 interno
+EXPOSE 80
+
+# Paso 8. Se ejecuta Nginx en primer plano con daemon off (CMD ["executable","param1","param2"])
+CMD ["nginx", "-g", "daemon off;"]
