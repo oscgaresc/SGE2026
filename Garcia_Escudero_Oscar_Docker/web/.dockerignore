@@ -1,0 +1,8 @@
+# IMPORTATNE: diferente a .gitignore, como se trabaja con github añado más element
+.git
+.gitignore
+.env
+node_modules
+*.md
+Dockerfile
+.DS_Store

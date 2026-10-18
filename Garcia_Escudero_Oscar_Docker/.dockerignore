@@ -1,6 +1,0 @@
-# IMPORTATNE: diferente a .gitignore
-.git
-node_modules
-*.md
-Dockerfile
-.DS_Store

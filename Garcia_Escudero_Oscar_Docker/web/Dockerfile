@@ -9,8 +9,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY site/ /usr/share/nginx/html/
 
 # Paso 4. Se crea el usuari no-root 'nginxuser' y se ajusta los permisos de carpetes necessàries per a Nginx
-RUN adduser -D -u 10001 nginxuser && \ # añadiendo el usuario
-	# añadiendo usuario y grupo a las carpetas necesarias
+# añadiendo el usuario
+# añadiendo usuario y grupo a las carpetas necesarias
+RUN adduser -D -u 10001 nginxuser && \ 
     chown -R nginxuser:nginxuser /usr/share/nginx/html && \
     chown -R nginxuser:nginxuser /var/cache/nginx && \
     chown -R nginxuser:nginxuser /var/log/nginx && \

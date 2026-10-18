@@ -1,0 +1,113 @@
+#Versión del fichero docker-compose 3.9. No obligatorio desde la versión de docker-compose 1.27.0, por tanto, no se añade
+
+#Se indica los servicios a lanzar siguiendo las especificaciones
+services:
+  #Plantilla del servicio "wordpress
+  web:
+    # Se indica que para lanzar este servicio, debe estar en marcha "db" con la condición de que esté saludable antes de arrancar
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # Se añade a la red virtual privada y aislada para que se comuniquen todos los contenedores del stack
+    networks:
+      - backend
+
+    # La imagen web se construirá usando el Dockerfile de la carpeta web/.
+    build:
+      context: ../web # cuidado con los espacios
+      dockerfile: Dockerfile
+
+    # Se indica la imagen "alumnostack-web", version "1.0"
+    image: alumnostack-web:1.0
+
+    # Se indica el nombre del contenedor
+    container_name: alumnostack-web
+
+    # Se indica que el puerto 80 del contenedor se mapea con el puerto 8080 del anfitrión
+    ports:
+      - "8080:80"
+
+    #Se Indica que siempre que el servicio finalice, se reiniciar
+    restart: unless-stopped
+
+  #Plantilla del servicio "db"
+  db:
+    #Se basa en la imagen "mysql", version "8.4" siguiendo las indicaciones
+    image: mysql:8.4
+
+    # Se indica el nombre del contenedor
+    container_name: alumnostack-db
+
+    # Se indica que el puerto 3306 del contenedor se mapea con el puerto 3306 del anfitrión
+    ports:
+      - "3306:3306"
+
+    # Se añade a la red virtual privada y aislada para que se comuniquen todos los contenedores del stack
+    networks:
+      - backend
+    
+    # Se añade el Healthcheck real usando mysqladmin y realizando un ping al localhost.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s # tiempo máximo para realizar el
+      retries: 5 # número de intentos para saber si esta saludable
+      start_period: 15s # util para servicios pesados como mysql
+
+    #Se Indica que siempre que el servicio finalice, se reiniciar
+    restart: unless-stopped
+
+    #Mapea en el volumen "db_data" el directorio "/var/lib/mysql", lo que da persistencia al contenido de nginx en la BDA
+    volumes:
+      - db_data:/var/lib/mysql
+
+    # Se Define un conjunto de variables de entorno para estos contenedores, indicando password de root de mysql, nombre de BDA,
+    # usuario con permisos root (necesario para conexiones remotas) y password de ese usuario siguiendo las buenas prácticas a 
+    # través de .env
+    env_file:
+      - .env
+    environment: # ya no se muestran las contraseñas dentro del YML
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+   #Plantilla del servicio "Adminer"
+  adminer:
+
+    #Se basa en la imagen "adminer", version "4.8.1" siguiendo las indicaciones
+    image: adminer:4.8.1
+    
+
+    # Se indica el nombre del contenedor
+    container_name: alumnostack-adminer
+
+    # Se indica que el puerto 8080 del contenedor se mapea con el puerto 8081 del anfitrión
+    ports:
+      - "8081:8080"
+
+    #Se Indica que siempre que el servicio finalice, se reiniciar
+    restart: unless-stopped
+
+    # Se añade a la red virtual privada y aislada para que se comuniquen todos los contenedores del stack
+    networks:
+      - backend
+
+# Red personalizada de tipo bridge
+networks:
+  backend:
+    driver: bridge
+  
+# Se indica los volúmenes creados y compartidos a lo largo del fichero docker-compose.yml
+volumes:
+  db_data:
+
+    
+
+
+
+
+
+
+   
+

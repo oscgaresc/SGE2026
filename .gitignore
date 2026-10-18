@@ -1,0 +1,2 @@
+# Asegurando que las contraseñas de .env no se comparten en github
+/Garcia_Escudero_Oscar_Docker/compose/.env
