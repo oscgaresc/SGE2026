@@ -1,0 +1,47 @@
+**************************************************
+      SCRIPT DE VERIFICACIÓN DE LA TAREA 2
+**************************************************
+
+--------------------------------------------------
+Paso 1: Imprimiendo usuario y fecha:
+Usuario actual: oscgaresc
+Fecha y hora:   dom 18 oct 2026 21:41:39 CEST
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 2: Comprobando la imagen alumnostack-web:1.0:
+OK: La imagen alumnostack-web:1.0 existe.
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 3: listando los contenedores del stack con su estado:
+NAME                  IMAGE                 COMMAND                  SERVICE   CREATED       STATUS                      PORTS
+alumnostack-adminer   adminer:4.8.1         "entrypoint.sh php -…"   adminer   4 hours ago   Up 35 minutes               0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+alumnostack-db        mysql:8.4             "docker-entrypoint.s…"   db        4 hours ago   Up 35 minutes (healthy)     0.0.0.0:3306->3306/tcp, [::]:3306->3306/tcp, 33060/tcp
+alumnostack-web       alumnostack-web:1.0   "/docker-entrypoint.…"   web       4 hours ago   Up 35 minutes (unhealthy)   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+--------------------------------------------------
+
+--------------------------------------------------
+Parte 4 Comprobando que el volumen db_data existe.:
+OK: El volumen db_data existe.
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 5:  Comprobando que la red backend existe:
+OK: La red backend existe.
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 6:realizando una petición a http://localhost:8080 y muestrando el código HTTP:
+Código de respuesta HTTP: HTTP/1.1 200 OK
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 7: Comprobando la cabecera X-Alumno:
+X-Alumno: Oscar Garcia Escudero
+--------------------------------------------------
+
+--------------------------------------------------
+Paso 8: Contando las filas de la tabla alumnos de la base de datos:
+Número de alumnos: 1
+**************************************************
